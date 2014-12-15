@@ -1310,29 +1310,14 @@ std::string CE2STBData::GetChannelPiconPath(std::string strChannelName)
  ***********************************************/
 bool CE2STBData::OpenLiveStream(const PVR_CHANNEL &channel)
 {
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Channel %u", __FUNCTION__, channel.iUniqueId);
+  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Opening channel %u", __FUNCTION__, channel.iUniqueId);
 
   if ((int) channel.iUniqueId == m_iCurrentChannel)
   {
     return true;
   }
   SwitchChannel(channel);
-
-  //demcris
-  if(g_bDemuxing)
-  {
-    m_demux = new Demux(GetLiveStreamURL(channel));
-    XBMC->Log(ADDON::LOG_DEBUG, "%s: Done", __FUNCTION__);
-    return true;
-  }
-
-  if (m_tsBuffer)
-  {
-    SAFE_DELETE(m_tsBuffer);
-  }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Time shift buffer starting at %s", __FUNCTION__, GetLiveStreamURL(channel));
-  m_tsBuffer = new CE2STBTimeshift(GetLiveStreamURL(channel), g_strTimeshiftBufferPath);
-  return m_tsBuffer->IsValid();
+  return true;
 }
 
 /********************************************//**
@@ -1340,7 +1325,7 @@ bool CE2STBData::OpenLiveStream(const PVR_CHANNEL &channel)
  ***********************************************/
 bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "%s Switching channels", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "%s Switching to channel %d", __FUNCTION__, channel.iUniqueId);
 
   if ((int)channel.iUniqueId == m_iCurrentChannel)
   {
@@ -1380,11 +1365,16 @@ bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
   {
     SAFE_DELETE(m_tsBuffer);
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Time shifting buffer starting at %s", __FUNCTION__, GetLiveStreamURL(channel));
+  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Time shift buffer starting for %s", __FUNCTION__, GetLiveStreamURL(channel));
   m_tsBuffer = new CE2STBTimeshift(GetLiveStreamURL(channel), g_strTimeshiftBufferPath);
-  return m_tsBuffer->IsValid();
+  //return m_tsBuffer->IsValid();
+  if(g_bDemuxing && m_tsBuffer)
+  {
+    m_demux = new Demux(m_tsBuffer);
+    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Starting demuxer", __FUNCTION__);
+  }
+  return true;
 }
-
 /********************************************//**
  * Close channel live stream
  ***********************************************/

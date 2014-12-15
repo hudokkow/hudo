@@ -24,27 +24,25 @@
 #ifndef PVR_ENIGMA2STB_E2STBDEMUX_H
 #define PVR_ENIGMA2STB_E2STBDEMUX_H
 
+#include "client.h"
+#include "demuxer/tsDemuxer.h"
+#include "E2STBTimeshift.h"
+
 #include <map>
 #include <set>
 
-// #include <mythstream.h>
-// #include "../../../lib/cppmyth/cppmyth/src/mythstream.h"
-#include "cppmyth/cppmyth/src/mythstream.h"
 #include <platform/threads/mutex.h>
 #include <platform/threads/threads.h>
 #include <platform/util/buffer.h>
 
 #include <xbmc_stream_utils.hpp>
 
-#include "client.h"
-#include "demuxer/tsDemuxer.h"
-
 #define AV_BUFFER_SIZE          131072
 
 class Demux : public TSDemuxer, PLATFORM::CThread
 {
 public:
-  Demux(Myth::Stream *file);
+  Demux(CE2STBTimeshift *file);
   ~Demux();
 
   const unsigned char* ReadAV(uint64_t pos, size_t n);
@@ -60,7 +58,7 @@ public:
   int GetPlayingTime();
 
 private:
-  Myth::Stream *m_file;
+  CE2STBTimeshift *m_file;
   uint16_t m_channel;
   PLATFORM::SyncedBuffer<DemuxPacket*> m_demuxPacketBuffer;
   PLATFORM::CMutex m_mutex;

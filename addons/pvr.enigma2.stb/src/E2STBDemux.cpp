@@ -22,12 +22,10 @@
 
 #include "E2STBDemux.h"
 
-#include "platform/os.h"
+#include <platform/os.h>
 
-#include "libXBMC_pvr.h"
-#include "xbmc_codec_types.h"
-
-#include "client.h"
+#include <libXBMC_pvr.h>
+#include <xbmc_codec_types.h>
 
 #define LOGTAG                  "[DEMUX] "
 #define POSMAP_PTS_INTERVAL     (PTS_TIME_BASE * 2)       // 2 secs
@@ -62,7 +60,7 @@ void DemuxLog(int level, char *msg)
   }
 }
 
-Demux::Demux(Myth::Stream *file)
+Demux::Demux(CE2STBTimeshift *file)
   : CThread()
   , m_file(file)
   , m_channel(1)
@@ -134,7 +132,7 @@ const unsigned char* Demux::ReadAV(uint64_t pos, size_t n)
   if (pos < m_av_pos || pos > (m_av_pos + sz))
   {
     // seek and reset buffer
-    int64_t newpos = m_file->Seek((int64_t)pos, Myth::WHENCE_SET);
+    int64_t newpos = m_file->Seek((int64_t)pos, 0);
     if (newpos < 0)
       return NULL;
     m_av_pos = pos = (uint64_t)newpos;
@@ -159,7 +157,7 @@ const unsigned char* Demux::ReadAV(uint64_t pos, size_t n)
   int wait = 5000;
   while (wait > 0 && !IsStopped() )
   {
-    int ret = m_file->Read(m_av_rbe, len);
+    int ret = m_file->ReadData(m_av_rbe, len);
     if (ret > 0)
     {
       m_av_rbe += ret;
