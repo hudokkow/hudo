@@ -42,7 +42,7 @@
 class Demux : public TSDemuxer, PLATFORM::CThread
 {
 public:
-  Demux(CE2STBTimeshift *file);
+  Demux(CE2STBTimeshift *file, uint16_t channel);
   ~Demux();
 
   const unsigned char* ReadAV(uint64_t pos, size_t n);

@@ -1370,7 +1370,7 @@ bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
   //return m_tsBuffer->IsValid();
   if(g_bDemuxing && m_tsBuffer)
   {
-    m_demux = new Demux(m_tsBuffer);
+    m_demux = new Demux(m_tsBuffer, 0xffff); // Using channel 0xffff will demux all channels !
     XBMC->Log(ADDON::LOG_DEBUG, "%s -- Starting demuxer", __FUNCTION__);
   }
   return true;

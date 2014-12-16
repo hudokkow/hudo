@@ -673,7 +673,7 @@ int AVContext::parse_ts_psi()
         pmt_pid &= 0x1fff;
 
         demux_dbg(DEMUX_DBG_DEBUG, "%s: PAT version %u: new PMT %.4x channel %u\n", __FUNCTION__, version, pmt_pid, channel);
-        if (this->channel == 0 || this->channel == channel)
+        if (this->channel == 0xffff || this->channel == channel)
         {
           Packet& pmt = this->packets[pmt_pid];
           pmt.pid = pmt_pid;

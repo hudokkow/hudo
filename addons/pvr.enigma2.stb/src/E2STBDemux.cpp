@@ -60,10 +60,10 @@ void DemuxLog(int level, char *msg)
   }
 }
 
-Demux::Demux(CE2STBTimeshift *file)
+Demux::Demux(CE2STBTimeshift *file, uint16_t channel)
   : CThread()
   , m_file(file)
-  , m_channel(1)
+  , m_channel(channel)
   , m_demuxPacketBuffer(100)
   , m_av_buf_size(AV_BUFFER_SIZE)
   , m_av_pos(0)
