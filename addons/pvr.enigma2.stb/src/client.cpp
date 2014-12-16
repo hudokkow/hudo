@@ -436,6 +436,7 @@ extern "C"
       }
     }
     XBMC->Log(ADDON::LOG_DEBUG, "Load Radio channels group: %s", (g_bLoadRadioChannelsGroup) ? "yes" : "no");
+    XBMC->Log(ADDON::LOG_DEBUG, "Use internal demuxer: %s", (g_bDemuxing) ? "yes" : "no");
     XBMC->Log(ADDON::LOG_DEBUG, "Use time shifting: %s", (g_bUseTimeshift) ? "yes" : "no");
 
     if (g_bUseTimeshift)
@@ -448,6 +449,7 @@ extern "C"
     XBMC->Log(ADDON::LOG_DEBUG, "Zap before channel change: %s", (g_bZapBeforeChannelChange) ? "yes" : "no");
     XBMC->Log(ADDON::LOG_DEBUG, "Automatic timer list cleanup: %s", (g_bAutomaticTimerlistCleanup) ? "yes" : "no");
     XBMC->Log(ADDON::LOG_DEBUG, "Update interval: %dm", g_iClientUpdateInterval);
+    XBMC->Log(ADDON::LOG_DEBUG, "Use extra debug: %s", (g_bExtraDebug) ? "yes" : "no");
   }
 
   /********************************************//**
