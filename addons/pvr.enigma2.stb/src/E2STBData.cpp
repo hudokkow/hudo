@@ -24,6 +24,7 @@
 
 #include <algorithm>  /* std::transform for GetDeviceInfo() */
 #include <cctype>     /* std::toupper for GetDeviceInfo() */
+#include <cstdio>     /* sscanf for SwitchChannel() */
 #include <string>
 #include <vector>
 
@@ -1366,13 +1367,45 @@ bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
   {
     SAFE_DELETE(m_tsBuffer);
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Time shift buffer starting for %s", __FUNCTION__, GetLiveStreamURL(channel));
-  m_tsBuffer = new CE2STBTimeshift(GetLiveStreamURL(channel), g_strTimeshiftBufferPath);
+
+  /*
+   * Channel stream URLs are in the form of
+   * http://192.168.1.7:8001/1:0:1:32B:24:36:CE40000:0:0:0
+   * or
+   * http://username:password@192.168.1.7:8001/1:0:1:32B:24:36:CE40000:0:0:0:
+   * This field indicates the SID ------------------- ^
+   * Since we already know the SID for the channel, tokenize it and pass it to the demuxer
+   */
+  std::vector<std::string> tokens;
+  std::string::size_type start_pos = 0;
+  std::string::size_type delim_pos = 0;
+  std::string delimiters = ":";
+  std::string strChannelPath = GetLiveStreamURL(channel);
+
+  while (std::string::npos != delim_pos)
+  {
+    delim_pos = strChannelPath.find_first_of(delimiters, start_pos);
+    tokens.push_back(strChannelPath.substr(start_pos, delim_pos - start_pos));
+    start_pos = delim_pos + 1;
+  }
+
+  int iSID;
+  if (g_bUseAuthentication)
+  {
+    sscanf(tokens[6].c_str(), "%x", &iSID);
+  }
+  else
+  {
+    sscanf(tokens[5].c_str(), "%x", &iSID);
+  }
+
+  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Starting time shift buffer for channel %s", __FUNCTION__, strChannelPath.c_str());
+  m_tsBuffer = new CE2STBTimeshift(strChannelPath, g_strTimeshiftBufferPath);
   //return m_tsBuffer->IsValid();
   if(g_bDemuxing && m_tsBuffer)
   {
-    m_demux = new Demux(m_tsBuffer, 0xffff); // Using channel 0xffff will demux all channels !
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Starting demuxer for channel %s", __FUNCTION__, GetLiveStreamURL(channel));
+    m_demux = new Demux(m_tsBuffer, iSID); // Using channel 0xffff will demux all channels !
+    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Starting demuxer for channel %s with SID %d", __FUNCTION__, strChannelPath.c_str(), iSID);
   }
   return true;
 }
