@@ -862,11 +862,19 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
      * Backend API should provide the correct info
      * and at the moment it doesn't
      */
-    int iEPGGenre = m_categories.Category(entry.strPlotOutline.c_str());
-    broadcast.iGenreType = iEPGGenre & 0xF0;
-    broadcast.iGenreSubType = iEPGGenre & 0x0F;
-    XBMC->Log(ADDON::LOG_DEBUG, "[%s] EPG string %s translated to type %d and subtype %d", __FUNCTION__,
-        entry.strPlotOutline.c_str(), iEPGGenre & 0xF0, iEPGGenre & 0x0F);
+    if (g_bEITEPGGenre)
+    {
+      int iEPGGenre = m_categories.Category(entry.strPlotOutline.c_str());
+      broadcast.iGenreType = iEPGGenre & 0xF0;
+      broadcast.iGenreSubType = iEPGGenre & 0x0F;
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] EPG string %s translated to type %d and subtype %d", __FUNCTION__,
+          entry.strPlotOutline.c_str(), iEPGGenre & 0xF0, iEPGGenre & 0x0F);
+    }
+    else
+    {
+      broadcast.iGenreType = 0;
+      broadcast.iGenreSubType = 0;
+    }
     broadcast.strGenreDescription = "";
     broadcast.firstAired = 0;           /* Unused */
     broadcast.iParentalRating = 0;      /* Unused */

@@ -51,5 +51,6 @@
     <setting label="30066" id="updateinterval" type="number" default="20" />
     <setting label="30067" id="sendpowerstate" type="bool"   default="false" />
     <setting label="30068" id="extradebug"     type="bool"   default="false" />
+    <setting label="30069" id="loadepggenre"   type="bool"   default="false" />
   </category>
 </settings>

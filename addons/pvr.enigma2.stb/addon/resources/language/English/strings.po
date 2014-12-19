@@ -158,7 +158,11 @@ msgctxt "#30068"
 msgid "Enable extra debug"
 msgstr ""
 
-#empty strings from id 30069 to 30089
+msgctxt "#30069"
+msgid "Load EIT EPG genre"
+msgstr ""
+
+#empty strings from id 30070 to 30089
 
 #Lsep labels
 

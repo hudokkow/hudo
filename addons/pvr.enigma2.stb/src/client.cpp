@@ -67,6 +67,7 @@ int g_iClientUpdateInterval          = DEFAULT_UPDATE_INTERVAL;
 bool g_bSendDeepStanbyToSTB          = DEFAULT_SEND_DEEP_STANBY_TO_STB;
 // demcris
 bool g_bExtraDebug                   = DEFAULT_EXTRA_DEBUG;
+bool g_bEITEPGGenre                  = DEFAULT_LOAD_EIT_EPG_GENRE;
 
 CE2STBData *E2STBData = NULL;
 // demcris
@@ -376,6 +377,13 @@ extern "C"
       g_bExtraDebug = DEFAULT_EXTRA_DEBUG;
     }
 
+    /* Read setting "loadepggenre" from settings.xml */
+    if (!XBMC->GetSetting("loadepggenre", &g_bEITEPGGenre))
+    {
+      XBMC->Log(ADDON::LOG_ERROR, "Couldn't get EIT EPG genre setting. Default: %b", DEFAULT_LOAD_EIT_EPG_GENRE);
+      g_bEITEPGGenre = DEFAULT_LOAD_EIT_EPG_GENRE;
+    }
+
     /********************************************//**
      * Debug block
      * Log the crap out of client settings for
@@ -450,6 +458,7 @@ extern "C"
     XBMC->Log(ADDON::LOG_DEBUG, "Automatic timer list cleanup: %s", (g_bAutomaticTimerlistCleanup) ? "yes" : "no");
     XBMC->Log(ADDON::LOG_DEBUG, "Update interval: %dm", g_iClientUpdateInterval);
     XBMC->Log(ADDON::LOG_DEBUG, "Use extra debug: %s", (g_bExtraDebug) ? "yes" : "no");
+    XBMC->Log(ADDON::LOG_DEBUG, "Load EIT EPG genre: %s", (g_bEITEPGGenre) ? "yes" : "no");
   }
 
   /********************************************//**
@@ -683,9 +692,17 @@ extern "C"
         return ADDON_STATUS_NEED_RESTART;
       }
     }
+    else if (str == "loadepggenre")
+    {
+      XBMC->Log(ADDON::LOG_INFO, "[%s] Changed load EIT EPG genre from %u to %u", __FUNCTION__, g_bEITEPGGenre,
+          *(bool*)settingValue);
+      if (g_bEITEPGGenre != *(bool*)settingValue)
+      {
+        return ADDON_STATUS_NEED_RESTART;
+      }
+    }
     return ADDON_STATUS_OK;
   }
-
   void ADDON_Stop() {}
   void ADDON_FreeSettings() {}
   void ADDON_Announce(const char *_UNUSED(flag), const char *_UNUSED(sender), const char *_UNUSED(message),

@@ -92,6 +92,7 @@
 #define DEFAULT_SEND_DEEP_STANBY_TO_STB         false                                            /*!< @brief Send deep standby to STB */
 // demcris
 #define DEFAULT_EXTRA_DEBUG                     false                                            /*!< @brief Enable extra debug */
+#define DEFAULT_LOAD_EIT_EPG_GENRE              false                                            /*!< @brief Enable EIT EPG genre */
 
 /*!
  * @brief Connection client settings
@@ -138,6 +139,7 @@ extern int         g_iClientUpdateInterval;   /*!< @brief Client update interval
 extern bool        g_bSendDeepStanbyToSTB;    /*!< @brief Send deep standby command to STB */
 // demcris
 extern bool        g_bExtraDebug;             /*!< @brief Enable extra debug */
+extern bool        g_bEITEPGGenre;            /*!< @brief Enable EIT EPG genre */
 
 /*!
  * @brief Client settings
