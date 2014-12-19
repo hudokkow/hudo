@@ -81,24 +81,24 @@ CE2STBData::CE2STBData()
 CE2STBData::~CE2STBData()
 {
   PLATFORM::CLockObject lock(m_mutex);
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Stopping update thread", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Stopping update thread", __FUNCTION__);
   StopThread();
 
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Removing internal channels list", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Removing internal channels list", __FUNCTION__);
   m_channels.clear();
 
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Removing internal timers list", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Removing internal timers list", __FUNCTION__);
   m_timers.clear();
 
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Removing internal recordings list", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Removing internal recordings list", __FUNCTION__);
   m_recordings.clear();
 
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Removing internal channels groups list", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Removing internal channels groups list", __FUNCTION__);
   m_channelsGroups.clear();
 
   if (m_tsBuffer)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Removing internal time shifting buffer", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Removing internal time shifting buffer", __FUNCTION__);
     SAFE_DELETE(m_tsBuffer);
   }
   SAFE_DELETE(E2STBUtils);
@@ -117,7 +117,7 @@ bool CE2STBData::Open()
 
   if (!m_bIsConnected)
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Web interface can't be reached. Make sure connection options are correct",
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Web interface can't be reached. Make sure connection options are correct",
         __FUNCTION__);
     return false;
   }
@@ -136,7 +136,7 @@ bool CE2STBData::Open()
     }
   }
   TimerUpdates();
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Starting Enigma2 STB Client update thread", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Starting Enigma2 STB Client update thread", __FUNCTION__);
   CreateThread();
   return IsRunning();
 }
@@ -182,7 +182,7 @@ bool CE2STBData::GetDeviceInfo()
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return false;
   }
@@ -195,7 +195,7 @@ bool CE2STBData::GetDeviceInfo()
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't find <e2deviceinfo> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't find <e2deviceinfo> element", __FUNCTION__);
     return false;
   }
 
@@ -203,38 +203,37 @@ bool CE2STBData::GetDeviceInfo()
 
   if (!XMLUtils::GetString(pElement, "e2enigmaversion", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2enigmaversion> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2enigmaversion> from result", __FUNCTION__);
     return false;
   }
   m_strEnigmaVersion = strTemp.c_str();
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Enigma2 version is %s", __FUNCTION__, m_strEnigmaVersion.c_str());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Enigma2 version is %s", __FUNCTION__, m_strEnigmaVersion.c_str());
 
   if (!XMLUtils::GetString(pElement, "e2imageversion", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR,
-        "%s -- Couldn't parse <e2imageversion> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2imageversion> from result", __FUNCTION__);
     return false;
   }
   m_strImageVersion = strTemp.c_str();
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Enigma2 image version is %s", __FUNCTION__, m_strImageVersion.c_str());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Enigma2 image version is %s", __FUNCTION__, m_strImageVersion.c_str());
 
   if (!XMLUtils::GetString(pElement, "e2webifversion", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2webifversion> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2webifversion> from result", __FUNCTION__);
     return false;
   }
   m_strWebIfVersion = strTemp.c_str();
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Enigma2 web interface version is %s", __FUNCTION__, m_strWebIfVersion.c_str());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Enigma2 web interface version is %s", __FUNCTION__, m_strWebIfVersion.c_str());
 
   if (!XMLUtils::GetString(pElement, "e2devicename", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2devicename> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2devicename> from result", __FUNCTION__);
     return false;
   }
   /* http://stackoverflow.com/questions/7131858/stdtransform-and-toupper-no-matching-function */
   std::transform(strTemp.begin(), strTemp.end(), strTemp.begin(), (int (*)(int))std::toupper);
   m_strServerName += " " + strTemp;
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Enigma2 device name is %s", __FUNCTION__, m_strServerName.c_str());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Enigma2 device name is %s", __FUNCTION__, m_strServerName.c_str());
   return true;
 }
 
@@ -254,7 +253,7 @@ bool CE2STBData::SendCommandToSTB(const CStdString& strCommandURL, CStdString& s
     TiXmlDocument xmlDoc;
     if (!xmlDoc.Parse(strXML.c_str()))
     {
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
           xmlDoc.ErrorRow());
       return false;
     }
@@ -266,28 +265,27 @@ bool CE2STBData::SendCommandToSTB(const CStdString& strCommandURL, CStdString& s
     pElement = hDoc.FirstChildElement("e2simplexmlresult").Element();
     if (!pElement)
     {
-      XBMC->Log(ADDON::LOG_DEBUG,
-          "%s -- Couldn't find <e2simplexmlresult> element", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2simplexmlresult> element", __FUNCTION__);
       return false;
     }
 
     bool bTmp;
     if (!XMLUtils::GetBoolean(pElement, "e2state", bTmp))
     {
-      XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2state> from result", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2state> from result", __FUNCTION__);
       strResultText.Format("Could not parse e2state!");
       return false;
     }
 
     if (!XMLUtils::GetString(pElement, "e2statetext", strResultText))
     {
-      XBMC->Log(ADDON::LOG_ERROR, "%s Could not parse <e2state> from result!", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_ERROR, "[%s] Could not parse <e2state> from result!", __FUNCTION__);
       return false;
     }
 
     if (!bTmp)
     {
-      XBMC->Log(ADDON::LOG_ERROR, "%s -- Backend sent error message %s", __FUNCTION__, strResultText.c_str());
+      XBMC->Log(ADDON::LOG_ERROR, "[%s] Backend sent error message %s", __FUNCTION__, strResultText.c_str());
     }
     return bTmp;
   }
@@ -299,12 +297,12 @@ bool CE2STBData::SendCommandToSTB(const CStdString& strCommandURL, CStdString& s
  ***********************************************/
 void *CE2STBData::Process()
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Starting", __FUNCTION__);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Starting", __FUNCTION__);
 
   for (unsigned int iChannelPtr = 0; iChannelPtr < m_channels.size();
       iChannelPtr++)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Triggering EPG update for channel %d", __FUNCTION__, iChannelPtr);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Triggering EPG update for channel %d", __FUNCTION__, iChannelPtr);
     PVR->TriggerEpgUpdate(m_channels.at(iChannelPtr).iUniqueId);
   }
 
@@ -319,7 +317,7 @@ void *CE2STBData::Process()
 
       /* Trigger Timer and Recording updates according to client settings */
       PLATFORM::CLockObject lock(m_mutex);
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- Updating timers and recordings", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] Updating timers and recordings", __FUNCTION__);
 
       if (g_bAutomaticTimerlistCleanup)
       {
@@ -329,7 +327,7 @@ void *CE2STBData::Process()
         CStdString strResult;
         if (!SendCommandToSTB(strTemp, strResult))
         {
-          XBMC->Log(ADDON::LOG_ERROR, "%s -- Automatic timer list cleanup failed", __FUNCTION__);
+          XBMC->Log(ADDON::LOG_ERROR, "[%s] Automatic timer list cleanup failed", __FUNCTION__);
         }
       }
       TimerUpdates();
@@ -401,7 +399,7 @@ PVR_ERROR CE2STBData::GetChannelGroups(ADDON_HANDLE handle)
  ***********************************************/
 PVR_ERROR CE2STBData::GetChannelGroupMembers(ADDON_HANDLE handle, const PVR_CHANNEL_GROUP &group)
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Adding channels from group %s", __FUNCTION__, group.strGroupName);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Adding channels from group %s", __FUNCTION__, group.strGroupName);
   std::string strTemp = group.strGroupName;
   for (unsigned int i = 0; i < m_channels.size(); i++)
   {
@@ -415,7 +413,7 @@ PVR_ERROR CE2STBData::GetChannelGroupMembers(ADDON_HANDLE handle, const PVR_CHAN
       tag.iChannelUniqueId = myChannel.iUniqueId;
       tag.iChannelNumber = myChannel.iChannelNumber;
 
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Added channel %s with unique ID %d to group %s and channel number %d",
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Added channel %s with unique ID %d to group %s and channel number %d",
           __FUNCTION__, myChannel.strChannelName.c_str(), tag.iChannelUniqueId, group.strGroupName,
           myChannel.iChannelNumber);
       PVR->TransferChannelGroupMember(handle, &tag);
@@ -444,7 +442,7 @@ int CE2STBData::GetTotalChannelNumber(std::string strServiceReference)
  ***********************************************/
 bool CE2STBData::LoadChannels(std::string strServiceReference, std::string strGroupName)
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Loading channel group %s", __FUNCTION__, strGroupName.c_str());
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Loading channel group %s", __FUNCTION__, strGroupName.c_str());
 
   std::string strTemp = m_strBackendBaseURLWeb + "web/getservices?sRef="
       + E2STBUtils->URLEncodeInline(strServiceReference);
@@ -453,7 +451,7 @@ bool CE2STBData::LoadChannels(std::string strServiceReference, std::string strGr
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return false;
   }
@@ -466,7 +464,7 @@ bool CE2STBData::LoadChannels(std::string strServiceReference, std::string strGr
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2servicelist> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2servicelist> element", __FUNCTION__);
     return false;
   }
 
@@ -476,7 +474,7 @@ bool CE2STBData::LoadChannels(std::string strServiceReference, std::string strGr
 
   if (!pNode)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2service> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2service> element", __FUNCTION__);
     return false;
   }
 
@@ -555,10 +553,10 @@ bool CE2STBData::LoadChannels(std::string strServiceReference, std::string strGr
       newChannel.strIconPath = strURL;
     }
     m_channels.push_back(newChannel);
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Loaded channel %s with picon %s", __FUNCTION__,
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Loaded channel %s with picon %s", __FUNCTION__,
         newChannel.strChannelName.c_str(), newChannel.strIconPath.c_str());
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Loaded %d channels", __FUNCTION__, m_channels.size());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Loaded %d channels", __FUNCTION__, m_channels.size());
   return true;
 }
 
@@ -599,7 +597,7 @@ bool CE2STBData::LoadChannelGroups()
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return false;
   }
@@ -612,7 +610,7 @@ bool CE2STBData::LoadChannelGroups()
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2servicelist> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2servicelist> element", __FUNCTION__);
     return false;
   }
 
@@ -622,7 +620,7 @@ bool CE2STBData::LoadChannelGroups()
 
   if (!pNode)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2service> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2service> element", __FUNCTION__);
     return false;
   }
 
@@ -658,45 +656,45 @@ bool CE2STBData::LoadChannelGroups()
       if (!g_strTVChannelGroupNameOne.empty() && g_strTVChannelGroupNameOne.compare(strTemp.c_str()) == 0
           && g_iNumTVChannelGroupsToLoad >= 1)
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- %s matches requested TV channel group #1 %s", __FUNCTION__, strTemp.c_str(),
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] %s matches requested TV channel group #1 %s", __FUNCTION__, strTemp.c_str(),
             g_strTVChannelGroupNameOne.c_str());
       }
       else if (!g_strTVChannelGroupNameTwo.empty() && g_strTVChannelGroupNameTwo.compare(strTemp.c_str()) == 0
           && g_iNumTVChannelGroupsToLoad >= 2)
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- %s matches requested TV channel group #2 %s", __FUNCTION__, strTemp.c_str(),
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] %s matches requested TV channel group #2 %s", __FUNCTION__, strTemp.c_str(),
             g_strTVChannelGroupNameTwo.c_str());
       }
       else if (!g_strTVChannelGroupNameThree.empty() && g_strTVChannelGroupNameThree.compare(strTemp.c_str()) == 0
           && g_iNumTVChannelGroupsToLoad >= 3)
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- %s matches requested TV channel group #3 %s", __FUNCTION__, strTemp.c_str(),
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] %s matches requested TV channel group #3 %s", __FUNCTION__, strTemp.c_str(),
             g_strTVChannelGroupNameThree.c_str());
       }
       else if (!g_strTVChannelGroupNameFour.empty() && g_strTVChannelGroupNameFour.compare(strTemp.c_str()) == 0
           && g_iNumTVChannelGroupsToLoad >= 4)
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- %s matches requested TV channel group #4 %s", __FUNCTION__, strTemp.c_str(),
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] %s matches requested TV channel group #4 %s", __FUNCTION__, strTemp.c_str(),
             g_strTVChannelGroupNameFour.c_str());
       }
       else if (!g_strTVChannelGroupNameFive.empty() && g_strTVChannelGroupNameFive.compare(strTemp.c_str()) == 0
           && g_iNumTVChannelGroupsToLoad == 5)
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- %s matches requested TV channel group #5 %s", __FUNCTION__, strTemp.c_str(),
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] %s matches requested TV channel group #5 %s", __FUNCTION__, strTemp.c_str(),
             g_strTVChannelGroupNameFive.c_str());
       }
       else
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- TV channel group %s doesn't match any requested group", __FUNCTION__,
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] TV channel group %s doesn't match any requested group", __FUNCTION__,
             strTemp.c_str());
         continue;
       }
     }
     m_channelsGroups.push_back(newGroup);
-    XBMC->Log(ADDON::LOG_NOTICE, "%s -- Loaded TV channel group %s", __FUNCTION__, newGroup.strGroupName.c_str());
+    XBMC->Log(ADDON::LOG_NOTICE, "[%s] Loaded TV channel group %s", __FUNCTION__, newGroup.strGroupName.c_str());
     m_iNumChannelGroups++;
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Loaded %d TV channel groups", __FUNCTION__, m_iNumChannelGroups);
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Loaded %d TV channel groups", __FUNCTION__, m_iNumChannelGroups);
   return true;
 }
 
@@ -745,7 +743,7 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
 {
   if (channel.iUniqueId - 1 > m_channels.size())
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't fetch EPG for channel with unique ID %d", __FUNCTION__,
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't fetch EPG for channel with unique ID %d", __FUNCTION__,
         channel.iUniqueId);
     return PVR_ERROR_NO_ERROR;
   }
@@ -761,7 +759,7 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return PVR_ERROR_SERVER_ERROR;
   }
@@ -774,7 +772,7 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2eventlist> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2eventlist> element", __FUNCTION__);
     /* EPG could be empty for this channel. Return "NO_ERROR" */
     return PVR_ERROR_NO_ERROR;
   }
@@ -785,7 +783,7 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
 
   if (!pNode)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2event> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2event> element", __FUNCTION__);
     return PVR_ERROR_SERVER_ERROR;
   }
 
@@ -874,11 +872,11 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
 
     iNumEPG++;
 
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Loaded EPG entry %d - %s for channel %d starting at %d and ending at %d",
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Loaded EPG entry %d - %s for channel %d starting at %d and ending at %d",
         __FUNCTION__, broadcast.iUniqueBroadcastId, broadcast.strTitle, entry.iChannelId, entry.startTime,
         entry.endTime);
   }
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Loaded %u EPG entries for channel %s", __FUNCTION__, iNumEPG,
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Loaded %u EPG entries for channel %s", __FUNCTION__, iNumEPG,
       channel.strChannelName);
   return PVR_ERROR_NO_ERROR;
 }
@@ -897,7 +895,7 @@ PVR_ERROR CE2STBData::GetDriveSpace(long long *iTotal, long long *iUsed)
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
   }
 
@@ -909,7 +907,7 @@ PVR_ERROR CE2STBData::GetDriveSpace(long long *iTotal, long long *iUsed)
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't find <e2hdd> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't find <e2hdd> element", __FUNCTION__);
     return PVR_ERROR_SERVER_ERROR;
   }
 
@@ -919,7 +917,7 @@ PVR_ERROR CE2STBData::GetDriveSpace(long long *iTotal, long long *iUsed)
 
   if (!XMLUtils::GetString(pElement, "e2capacity", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2capacity> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2capacity> from result", __FUNCTION__);
   }
 
   double totalHDDSpace = 0;
@@ -927,14 +925,14 @@ PVR_ERROR CE2STBData::GetDriveSpace(long long *iTotal, long long *iUsed)
 
   if (!XMLUtils::GetString(pElement, "e2free", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2free> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2free> from result", __FUNCTION__);
   }
   double freeHDDSpace = 0;
   freeHDDSpace = std::atof(strTemp.c_str());
 
   std::string strSizeModifier;
   strSizeModifier = strTemp.substr(strTemp.length() - 2);
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Size modifier is %s", __FUNCTION__, strSizeModifier.c_str());
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Size modifier is %s", __FUNCTION__, strSizeModifier.c_str());
 
   if (strSizeModifier == "MB")
   {/* Result might be in MB */
@@ -950,7 +948,7 @@ PVR_ERROR CE2STBData::GetDriveSpace(long long *iTotal, long long *iUsed)
   }
   *iTotal = (long long) totalHDDSpace;
   *iUsed = (long long) (totalHDDSpace - freeHDDSpace);
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Backend HDD has %lldKB used of %lldKB total space", __FUNCTION__, *iUsed, *iTotal);
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Backend HDD has %lldKB used of %lldKB total space", __FUNCTION__, *iUsed, *iTotal);
   return PVR_ERROR_NO_ERROR;
 }
 
@@ -968,7 +966,7 @@ PVR_ERROR CE2STBData::SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
   }
 
@@ -979,34 +977,34 @@ PVR_ERROR CE2STBData::SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   pElement = hDoc.FirstChildElement("e2frontendstatus").Element();
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't find <e2frontendstatus> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't find <e2frontendstatus> element", __FUNCTION__);
     return PVR_ERROR_SERVER_ERROR;
   }
 
   CStdString strTemp;
   if (!XMLUtils::GetString(pElement, "e2snrdb", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2snrdb> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2snrdb> from result", __FUNCTION__);
   }
   std::string strSNRDB = strTemp.c_str();
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- SNRDB is %s", __FUNCTION__, strSNRDB.c_str());
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] SNRDB is %s", __FUNCTION__, strSNRDB.c_str());
   /* STB's API 100% = 17.00dB, hence SNRDB * 5.88235 */
   tag.iSNR = (std::atof(strTemp.c_str()) * 5.88235 * 655.35 + 0.5);
 
   if (!XMLUtils::GetString(pElement, "e2snr", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2snr> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2snr> from result", __FUNCTION__);
   }
   std::string strSNR = strTemp.c_str();
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- SNR is %s", __FUNCTION__, strSNR.c_str());
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] SNR is %s", __FUNCTION__, strSNR.c_str());
   tag.iSignal = (std::atoi(strTemp.c_str()) * 655.35);
 
   if (!XMLUtils::GetString(pElement, "e2ber", strTemp))
   {
-    XBMC->Log(ADDON::LOG_ERROR, "%s -- Couldn't parse <e2ber> from result", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_ERROR, "[%s] Couldn't parse <e2ber> from result", __FUNCTION__);
   }
   std::string strBER = strTemp.c_str();
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- BER is %s", __FUNCTION__, strBER.c_str());
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] BER is %s", __FUNCTION__, strBER.c_str());
   tag.iBER = std::atol(strTemp.c_str());
 
   signalStatus = tag;
@@ -1044,7 +1042,7 @@ PVR_ERROR CE2STBData::GetRecordings(ADDON_HANDLE handle)
   {
     if (!GetRecordingFromLocation(m_recordingsLocations[i]))
     {
-      XBMC->Log(ADDON::LOG_ERROR, "%s -- Error fetching recordings list from folder %s", __FUNCTION__,
+      XBMC->Log(ADDON::LOG_ERROR, "[%s] Error fetching recordings list from folder %s", __FUNCTION__,
           m_recordingsLocations[i].c_str());
     }
   }
@@ -1072,7 +1070,7 @@ bool CE2STBData::LoadRecordingLocations()
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return false;
   }
@@ -1085,7 +1083,7 @@ bool CE2STBData::LoadRecordingLocations()
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2locations> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2locations> element", __FUNCTION__);
     return false;
   }
 
@@ -1095,7 +1093,7 @@ bool CE2STBData::LoadRecordingLocations()
 
   if (!pNode)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2location> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2location> element", __FUNCTION__);
     return false;
   }
 
@@ -1106,9 +1104,9 @@ bool CE2STBData::LoadRecordingLocations()
     CStdString strTemp = pNode->GetText();
     m_recordingsLocations.push_back(strTemp);
     iNumLocations++;
-    XBMC->Log(ADDON::LOG_NOTICE, "%s -- Added %s as a recording location", __FUNCTION__, strTemp.c_str());
+    XBMC->Log(ADDON::LOG_NOTICE, "[%s] Added %s as a recording location", __FUNCTION__, strTemp.c_str());
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Loaded %d recording locations", __FUNCTION__, iNumLocations);
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Loaded %d recording locations", __FUNCTION__, iNumLocations);
   return true;
 }
 
@@ -1123,11 +1121,11 @@ bool CE2STBData::IsInRecordingFolder(std::string strRecordingFolder)
     if (strRecordingFolder.compare(m_recordings.at(i).strTitle) == 0)
     {
       iMatches++;
-      XBMC->Log(ADDON::LOG_DEBUG,
-          "%s -- Found recording title %s in recordings vector", __FUNCTION__, strRecordingFolder.c_str());
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Found recording title %s in recordings vector", __FUNCTION__,
+          strRecordingFolder.c_str());
       if (iMatches > 1)
       {
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- Found recording title %s more than once in recordings vector", __FUNCTION__,
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] Found recording title %s more than once in recordings vector", __FUNCTION__,
             strRecordingFolder.c_str());
         return true;
       }
@@ -1156,7 +1154,7 @@ bool CE2STBData::GetRecordingFromLocation(std::string strRecordingFolder)
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return false;
   }
@@ -1169,7 +1167,7 @@ bool CE2STBData::GetRecordingFromLocation(std::string strRecordingFolder)
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2movielist> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2movielist> element", __FUNCTION__);
     return false;
   }
 
@@ -1179,7 +1177,7 @@ bool CE2STBData::GetRecordingFromLocation(std::string strRecordingFolder)
 
   if (!pNode)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2movie> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2movie> element", __FUNCTION__);
     return false;
   }
 
@@ -1243,11 +1241,10 @@ bool CE2STBData::GetRecordingFromLocation(std::string strRecordingFolder)
     m_iNumRecordings++;
     iNumRecording++;
     m_recordings.push_back(recording);
-    XBMC->Log(ADDON::LOG_DEBUG,
-        "%s -- Loaded recording %s starting at %d with length %d", __FUNCTION__, recording.strTitle.c_str(),
-        recording.startTime, recording.iDuration);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Loaded recording %s starting at %d with length %d", __FUNCTION__,
+        recording.strTitle.c_str(), recording.startTime, recording.iDuration);
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Loaded %u recording entries from folder %s", __FUNCTION__, iNumRecording,
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Loaded %u recording entries from folder %s", __FUNCTION__, iNumRecording,
       strRecordingFolder.c_str());
   return true;
 }
@@ -1311,7 +1308,7 @@ std::string CE2STBData::GetChannelPiconPath(std::string strChannelName)
  ***********************************************/
 bool CE2STBData::OpenLiveStream(const PVR_CHANNEL &channel)
 {
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Opening channel %u", __FUNCTION__, channel.iUniqueId);
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Opening channel %u", __FUNCTION__, channel.iUniqueId);
 
   if ((int) channel.iUniqueId == m_iCurrentChannel)
   {
@@ -1326,7 +1323,7 @@ bool CE2STBData::OpenLiveStream(const PVR_CHANNEL &channel)
  ***********************************************/
 bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "%s Switching to channel %d", __FUNCTION__, channel.iUniqueId);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Switching to channel %d", __FUNCTION__, channel.iUniqueId);
 
   if ((int)channel.iUniqueId == m_iCurrentChannel)
   {
@@ -1343,7 +1340,7 @@ bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
   {
     std::string strServiceReference = m_channels.at(channel.iUniqueId - 1).strServiceReference;
     std::string strTemp = "web/zap?sRef=" + E2STBUtils->URLEncodeInline(strServiceReference);
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Zap command sent to box %s", __FUNCTION__, strTemp.c_str());
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Zap command sent to box %s", __FUNCTION__, strTemp.c_str());
 
     CStdString strResult;
     if (!SendCommandToSTB(strTemp, strResult))
@@ -1399,13 +1396,14 @@ bool CE2STBData::SwitchChannel(const PVR_CHANNEL &channel)
     sscanf(tokens[5].c_str(), "%x", &iSID);
   }
 
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Starting time shift buffer for channel %s", __FUNCTION__, strChannelPath.c_str());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Starting time shift buffer for channel %s", __FUNCTION__, strChannelPath.c_str());
   m_tsBuffer = new CE2STBTimeshift(strChannelPath, g_strTimeshiftBufferPath);
   //return m_tsBuffer->IsValid();
   if(g_bDemuxing && m_tsBuffer)
   {
     m_demux = new Demux(m_tsBuffer, iSID); // Using channel 0xffff will demux all channels !
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Starting demuxer for channel %s with SID %d", __FUNCTION__, strChannelPath.c_str(), iSID);
+    XBMC->Log(ADDON::LOG_NOTICE, "[%s] Starting demuxer for channel %s with SID %d", __FUNCTION__,
+        strChannelPath.c_str(), iSID);
   }
   return true;
 }
@@ -1436,7 +1434,7 @@ void CE2STBData::CloseLiveStream(void)
  ***********************************************/
 PVR_ERROR CE2STBData::AddTimer(const PVR_TIMER &timer)
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Channel UID is %d with title %s and EPG ID %d", __FUNCTION__,
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Channel UID is %d with title %s and EPG ID %d", __FUNCTION__,
       timer.iClientChannelUid, timer.strTitle, timer.iEpgUid);
 
   std::string strServiceReference = m_channels.at(timer.iClientChannelUid - 1).strServiceReference;
@@ -1493,11 +1491,11 @@ PVR_ERROR CE2STBData::DeleteTimer(const PVR_TIMER &timer)
  ***********************************************/
 PVR_ERROR CE2STBData::GetTimers(ADDON_HANDLE handle)
 {
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Number of timers is %d", __FUNCTION__, m_timers.size());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Number of timers is %d", __FUNCTION__, m_timers.size());
   for (unsigned int i = 0; i < m_timers.size(); i++)
   {
     SE2STBTimer &timer = m_timers.at(i);
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Transferring timer %s with client index %d", __FUNCTION__,
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Transferring timer %s with client index %d", __FUNCTION__,
         timer.strTitle.c_str(), timer.iClientIndex);
     PVR_TIMER tag;
     memset(&tag, 0, sizeof(PVR_TIMER));
@@ -1530,7 +1528,7 @@ PVR_ERROR CE2STBData::GetTimers(ADDON_HANDLE handle)
 PVR_ERROR CE2STBData::UpdateTimer(const PVR_TIMER &timer)
 {
   /* TODO Check it works */
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer channel ID %d", __FUNCTION__, timer.iClientChannelUid);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer channel ID %d", __FUNCTION__, timer.iClientChannelUid);
 
   std::string strServiceReference = m_channels.at(timer.iClientChannelUid - 1).strServiceReference;
 
@@ -1548,7 +1546,7 @@ PVR_ERROR CE2STBData::UpdateTimer(const PVR_TIMER &timer)
   }
   SE2STBTimer &oldTimer = m_timers.at(i);
   std::string strOldServiceReference = m_channels.at(oldTimer.iChannelId - 1).strServiceReference;
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Old timer channel ID %d", __FUNCTION__, oldTimer.iChannelId);
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Old timer channel ID %d", __FUNCTION__, oldTimer.iChannelId);
 
   int iDisabled = 0;
   if (timer.state == PVR_TIMER_STATE_CANCELLED)
@@ -1627,7 +1625,7 @@ void CE2STBData::TimerUpdates()
   {
     if (m_timers.at(i).iUpdateState == E2STB_UPDATE_STATE_NONE)
     {
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- Removed timer %s with client index %d", __FUNCTION__,
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] Removed timer %s with client index %d", __FUNCTION__,
           m_timers.at(i).strTitle.c_str(), m_timers.at(i).iClientIndex);
       m_timers.erase(m_timers.begin() + i);
       i = 0;
@@ -1642,19 +1640,19 @@ void CE2STBData::TimerUpdates()
     {
       SE2STBTimer &timer = newtimer.at(i);
       timer.iClientIndex = m_iTimersIndexCounter;
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- New timer %s with client index %d", __FUNCTION__, timer.strTitle.c_str(),
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] New timer %s with client index %d", __FUNCTION__, timer.strTitle.c_str(),
           m_iTimersIndexCounter);
       m_timers.push_back(timer);
       m_iTimersIndexCounter++;
       iNew++;
     }
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- %d timers removed, %d untouched, %d,updated and %d new", __FUNCTION__,
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] %d timers removed, %d untouched, %d,updated and %d new", __FUNCTION__,
       iRemoved, iUnchanged, iUpdated, iNew);
 
   if (iRemoved != 0 || iUpdated != 0 || iNew != 0)
   {
-    XBMC->Log(ADDON::LOG_NOTICE, "%s -- Timers list changes detected, triggering an update", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_NOTICE, "[%s] Timers list changes detected, triggering an update", __FUNCTION__);
     PVR->TriggerTimerUpdate();
   }
 }
@@ -1672,7 +1670,7 @@ std::vector<SE2STBTimer> CE2STBData::LoadTimers()
   TiXmlDocument xmlDoc;
   if (!xmlDoc.Parse(strXML.c_str()))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Unable to parse XML %s at line %d", __FUNCTION__, xmlDoc.ErrorDesc(),
         xmlDoc.ErrorRow());
     return timers;
   }
@@ -1685,7 +1683,7 @@ std::vector<SE2STBTimer> CE2STBData::LoadTimers()
 
   if (!pElement)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2timerlist> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2timerlist> element", __FUNCTION__);
     return timers;
   }
 
@@ -1695,7 +1693,7 @@ std::vector<SE2STBTimer> CE2STBData::LoadTimers()
 
   if (!pNode)
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't find <e2timer> element", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't find <e2timer> element", __FUNCTION__);
     return timers;
   }
 
@@ -1709,7 +1707,7 @@ std::vector<SE2STBTimer> CE2STBData::LoadTimers()
 
     if (XMLUtils::GetString(pNode, "e2name", strTemp))
     {
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Processing timer %s", __FUNCTION__, strTemp.c_str());
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Processing timer %s", __FUNCTION__, strTemp.c_str());
     }
 
     if (!XMLUtils::GetInt(pNode, "e2state", iTmp))
@@ -1784,24 +1782,24 @@ std::vector<SE2STBTimer> CE2STBData::LoadTimers()
       continue;
     }
 
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- e2state is %d", __FUNCTION__, iTmp);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] e2state is %d", __FUNCTION__, iTmp);
 
     if (iTmp == 0)
     {
       timer.state = PVR_TIMER_STATE_SCHEDULED;
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer state is scheduled", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer state is scheduled", __FUNCTION__);
     }
 
     if (iTmp == 2)
     {
       timer.state = PVR_TIMER_STATE_RECORDING;
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer state is recording", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer state is recording", __FUNCTION__);
     }
 
     if (iTmp == 3 && iDisabled == 0)
     {
       timer.state = PVR_TIMER_STATE_COMPLETED;
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer state is completed", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer state is completed", __FUNCTION__);
     }
 
     if (XMLUtils::GetBoolean(pNode, "e2cancled", bTmp))
@@ -1809,27 +1807,26 @@ std::vector<SE2STBTimer> CE2STBData::LoadTimers()
       if (bTmp)
       {
         timer.state = PVR_TIMER_STATE_ABORTED;
-        XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer state is aborted", __FUNCTION__);
+        XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer state is aborted", __FUNCTION__);
       }
     }
 
     if (iDisabled == 1)
     {
       timer.state = PVR_TIMER_STATE_CANCELLED;
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer state is cancelled", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer state is cancelled", __FUNCTION__);
     }
 
     if (timer.state == PVR_TIMER_STATE_NEW)
     {
-      XBMC->Log(ADDON::LOG_DEBUG, "%s -- Timer state is new", __FUNCTION__);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timer state is new", __FUNCTION__);
     }
 
     timers.push_back(timer);
-    XBMC->Log(ADDON::LOG_NOTICE,
-        "%s -- Fetched timer %s beginning at %d and ending at %d", __FUNCTION__, timer.strTitle.c_str(),
-        timer.startTime, timer.endTime);
+    XBMC->Log(ADDON::LOG_NOTICE, "[%s] Fetched timer %s beginning at %d and ending at %d", __FUNCTION__,
+        timer.strTitle.c_str(), timer.startTime, timer.endTime);
   }
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Fetched %u timer entries", __FUNCTION__, timers.size());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Fetched %u timer entries", __FUNCTION__, timers.size());
   return timers;
 }
 

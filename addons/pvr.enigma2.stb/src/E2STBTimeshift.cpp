@@ -72,7 +72,7 @@ void CE2STBTimeshift::Stop()
 
 void *CE2STBTimeshift::Process()
 {
-  XBMC->Log(ADDON::LOG_DEBUG, "Timeshift thread started");
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timeshift thread started", __FUNCTION__);
   byte buffer[STREAM_READ_BUFFER_SIZE];
 
   while (m_start)
@@ -86,7 +86,7 @@ void *CE2STBTimeshift::Process()
     m_mutex.Unlock();
 #endif
   }
-  XBMC->Log(ADDON::LOG_DEBUG, "Timeshift thread stopped");
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timeshift thread stopped", __FUNCTION__);
   return NULL;
 }
 
@@ -147,7 +147,7 @@ int CE2STBTimeshift::ReadData(unsigned char *buffer, unsigned int size)
   {
     if (timeWaited > BUFFER_READ_TIMEOUT)
     {
-      XBMC->Log(ADDON::LOG_DEBUG, "Timeshift: Read timed out; waited %u", timeWaited);
+      XBMC->Log(ADDON::LOG_DEBUG, "[%s] Timeshift: Read timed out; waited %u", __FUNCTION__, timeWaited);
       return -1;
     }
     Sleep(BUFFER_READ_WAITTIME);

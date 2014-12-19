@@ -116,15 +116,15 @@ std::string CE2STBUtils::IntToString(int a)
  ***********************************************/
 std::string CE2STBUtils::BackendConnection(std::string& url)
 {
-  XBMC->Log(ADDON::LOG_NOTICE, "%s -- Opening web interface with URL %s", __FUNCTION__, url.c_str());
+  XBMC->Log(ADDON::LOG_NOTICE, "[%s] Opening web interface with URL %s", __FUNCTION__, url.c_str());
 
   std::string strTemp;
   if (!GetXMLFromHTTP(url, strTemp))
   {
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Couldn't open web interface.", __FUNCTION__);
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Couldn't open web interface.", __FUNCTION__);
     return "";
   }
-  XBMC->Log(ADDON::LOG_DEBUG, "%s -- Got result with length %u", __FUNCTION__, strTemp.length());
+  XBMC->Log(ADDON::LOG_DEBUG, "[%s] Got result with length %u", __FUNCTION__, strTemp.length());
   return strTemp;
 }
 

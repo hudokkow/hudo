@@ -489,7 +489,7 @@ extern "C"
       return ADDON_STATUS_PERMANENT_FAILURE;
     }
 
-    XBMC->Log(ADDON::LOG_DEBUG, "%s -- Creating Enigma2 STB Client",
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] Creating Enigma2 STB Client",
         __FUNCTION__);
 
     m_CurStatus = ADDON_STATUS_UNKNOWN;
@@ -577,7 +577,7 @@ extern "C"
     if (str == "hostname")
     {
       std::string tmp_sHostname;
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed hostname from %s to %s", __FUNCTION__, g_strHostname.c_str(),
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed hostname from %s to %s", __FUNCTION__, g_strHostname.c_str(),
           (const char*) settingValue);
       tmp_sHostname = g_strHostname;
       g_strHostname = (const char*) settingValue;
@@ -591,7 +591,7 @@ extern "C"
       int iNewValue = *(int*) settingValue + 1;
       if (g_iPortWebHTTP != iNewValue)
       {
-        XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed HTTP web interface port from %u to %u", __FUNCTION__,
+        XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed HTTP web interface port from %u to %u", __FUNCTION__,
             g_iPortWebHTTP, iNewValue);
         g_iPortWebHTTP = iNewValue;
         return ADDON_STATUS_OK;
@@ -602,7 +602,7 @@ extern "C"
       int iNewValue = *(int*) settingValue + 1;
       if (g_iPortStream != iNewValue)
       {
-        XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed streaming port from %u to %u", __FUNCTION__,
+        XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed streaming port from %u to %u", __FUNCTION__,
             g_iPortStream, iNewValue);
         g_iPortStream = iNewValue;
         return ADDON_STATUS_OK;
@@ -614,7 +614,7 @@ extern "C"
       g_strUsername = (const char*) settingValue;
       if (tmp_sUsername != g_strUsername)
       {
-        XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed username ", __FUNCTION__);
+        XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed username ", __FUNCTION__);
         return ADDON_STATUS_NEED_RESTART;
       }
     }
@@ -624,13 +624,13 @@ extern "C"
       g_strPassword = (const char*) settingValue;
       if (tmp_sPassword != g_strPassword)
       {
-        XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed password ", __FUNCTION__);
+        XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed password ", __FUNCTION__);
         return ADDON_STATUS_NEED_RESTART;
       }
     }
     else if (str == "usesecurehttp")
     {
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed use HTTPS from %u to %u",
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed use HTTPS from %u to %u",
           __FUNCTION__, g_bUseSecureHTTP, *(int*) settingValue);
       g_bUseSecureHTTP = *(bool*) settingValue;
       return ADDON_STATUS_NEED_RESTART;
@@ -640,7 +640,7 @@ extern "C"
       int iNewValue = *(int*) settingValue + 1;
       if (g_iPortWebHTTPS != iNewValue)
       {
-        XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed HTTPS web interface port from %u to %u", __FUNCTION__,
+        XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed HTTPS web interface port from %u to %u", __FUNCTION__,
             g_iPortWebHTTPS, iNewValue);
         g_iPortWebHTTPS = iNewValue;
         return ADDON_STATUS_OK;
@@ -649,7 +649,7 @@ extern "C"
     // demcris
     else if (str == "usedemuxer")
     {
-      XBMC->Log(ADDON::LOG_INFO, "Changed use demuxer from %u to %u", g_bDemuxing, *(bool*)settingValue);
+      XBMC->Log(ADDON::LOG_INFO, "[%s] Changed use demuxer from %u to %u", __FUNCTION__, g_bDemuxing, *(bool*)settingValue);
       if (g_bDemuxing != *(bool*)settingValue)
       {
         return ADDON_STATUS_NEED_RESTART;
@@ -657,7 +657,7 @@ extern "C"
     }
     else if (str == "usetimeshift")
     {
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed use time shifting from %u to %u", __FUNCTION__,
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed use time shifting from %u to %u", __FUNCTION__,
           g_bUseTimeshift, *(int*) settingValue);
       g_bUseTimeshift = *(bool*) settingValue;
       return ADDON_STATUS_NEED_RESTART;
@@ -665,7 +665,7 @@ extern "C"
     else if (str == "timeshiftpath")
     {
       std::string tmp_sTimeshiftBufferPath = g_strTimeshiftBufferPath;
-      XBMC->Log(ADDON::LOG_NOTICE, "%s -- Changed time shifting buffer from %s to %s", __FUNCTION__,
+      XBMC->Log(ADDON::LOG_NOTICE, "[%s] Changed time shifting buffer from %s to %s", __FUNCTION__,
           g_strTimeshiftBufferPath.c_str(), (const char*) settingValue);
       g_strTimeshiftBufferPath = (const char*) settingValue;
       if (tmp_sTimeshiftBufferPath != g_strTimeshiftBufferPath)
@@ -676,8 +676,8 @@ extern "C"
     // demcris
     else if (str == "extradebug")
     {
-      XBMC->Log(ADDON::LOG_INFO, "Changed use extra debug from %u to %u",
-          g_bExtraDebug, *(bool*)settingValue);
+      XBMC->Log(ADDON::LOG_INFO, "[%s] Changed use extra debug from %u to %u", __FUNCTION__, g_bExtraDebug,
+          *(bool*)settingValue);
       if (g_bExtraDebug != *(bool*)settingValue)
       {
         return ADDON_STATUS_NEED_RESTART;
