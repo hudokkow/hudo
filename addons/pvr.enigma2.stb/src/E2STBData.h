@@ -33,6 +33,7 @@
 #include "client.h"
 // demcris
 #include "E2STBDemux.h"
+#include "E2STBEPGGenre.h"
 #include "E2STBTimeshift.h"
 #include "E2STBUtils.h"
 
@@ -256,6 +257,10 @@ class CE2STBData: public PLATFORM::CThread
     /* Timers */
     void TimerUpdates();
     std::vector<SE2STBTimer> LoadTimers(); /*!< @brief Backend Interface */
+
+    /*  EPG genre */
+    // epgcris
+    Categories m_categories;
 
     /* Lock */
     PLATFORM::CMutex m_mutex;    /*!< @brief CMutex class handler */

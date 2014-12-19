@@ -16,9 +16,10 @@ include ../Makefile.include.am
 
 libenigma2stb_addon_la_SOURCES = src/client.cpp \
                                  src/E2STBData.cpp \
+                                 src/E2STBDemux.cpp \
+                                 src/E2STBEPGGenre.cpp \
                                  src/E2STBTimeshift.cpp \
                                  src/E2STBUtils.cpp \
-                                 src/E2STBDemux.cpp \
                                  src/demuxer/debug.cpp \
                                  src/demuxer/elementaryStream.cpp \
                                  src/demuxer/tsDemuxer.cpp \

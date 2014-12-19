@@ -856,8 +856,17 @@ PVR_ERROR CE2STBData::GetEPGForChannel(ADDON_HANDLE handle, const PVR_CHANNEL &c
     broadcast.strPlotOutline = entry.strPlotOutline.c_str();
     broadcast.strPlot = entry.strPlot.c_str();
     broadcast.strIconPath = "";         /* Unused */
-    broadcast.iGenreType = 0;           /* Unused */
-    broadcast.iGenreSubType = 0;        /* Unused */
+    // epgcris
+    /* TODO: review this if and when API provides complete EPG info
+     * This is just the initial support for EPG genre
+     * Backend API should provide the correct info
+     * and at the moment it doesn't
+     */
+    int iEPGGenre = m_categories.Category(entry.strPlotOutline.c_str());
+    broadcast.iGenreType = iEPGGenre & 0xF0;
+    broadcast.iGenreSubType = iEPGGenre & 0x0F;
+    XBMC->Log(ADDON::LOG_DEBUG, "[%s] EPG string %s translated to type %d and subtype %d", __FUNCTION__,
+        entry.strPlotOutline.c_str(), iEPGGenre & 0xF0, iEPGGenre & 0x0F);
     broadcast.strGenreDescription = "";
     broadcast.firstAired = 0;           /* Unused */
     broadcast.iParentalRating = 0;      /* Unused */
