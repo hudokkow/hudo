@@ -788,6 +788,11 @@ extern "C"
     return strConnectionString.c_str();
   }
 
+  const char *GetBackendHostname(void)
+  {
+    return g_strHostname.c_str();
+  }
+
   /********************************************//**
    * Channels
    ***********************************************/
